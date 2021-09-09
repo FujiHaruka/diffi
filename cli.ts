@@ -1,19 +1,20 @@
-import { Ask, assertEquals } from "./deps.ts";
+import { assertEquals, BufReader } from "./deps.ts";
 
-const ask = new Ask();
+console.log("Text A");
 
-const answers = await ask.prompt([
-  {
-    name: "textA",
-    message: "Text A:",
-  },
-  {
-    name: "textB",
-    message: "Text B:",
-  },
-]) as { textA: string; textB: string };
+const readerA = new BufReader(Deno.stdin);
+const inputA = await readerA.readString(String.fromCharCode(26));
 
-main(answers.textA, answers.textB);
+console.log("Text C");
+
+const readerB = new BufReader(Deno.stdin);
+const inputB = await readerB.readString(String.fromCharCode(26));
+
+if (!inputA || !inputB) {
+  throw new Error("empty input");
+}
+
+main(inputA, inputB);
 
 function main(str1: string, str2: string) {
   try {
