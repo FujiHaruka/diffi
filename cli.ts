@@ -1,23 +1,28 @@
-import { assertEquals, BufReader, Color } from "./deps.ts";
+import { assertEquals, BufReader, Color, readStringDelim } from "./deps.ts";
 
 console.log(
-  "You can enter multiple-line text and finish entering text by ctrl+D on the beginning of a line",
+  "Enter multiple-line text and finish entering it by ctrl+D on the beginning of a line.",
 );
-console.log(Color.bold("Enter the first text (actual):"));
 
-const readerA = new BufReader(Deno.stdin);
-const inputA = await readerA.readString(String.fromCharCode(26));
+const reader = new BufReader(Deno.stdin);
+
+const inputs: string[] = [];
+
+console.log(Color.bold("Enter the first text (actual):"));
+for await (const input of readStringDelim(reader, String.fromCharCode(26))) {
+  inputs.push(input);
+}
 
 console.log(Color.bold("Enter the second text (expected):"));
+for await (const input of readStringDelim(reader, String.fromCharCode(26))) {
+  inputs.push(input);
+}
 
-const readerB = new BufReader(Deno.stdin);
-const inputB = await readerB.readString(String.fromCharCode(26));
-
-if (!inputA || !inputB) {
+if (!inputs[0] || !inputs[1]) {
   throw new Error("empty input");
 }
 
-main(inputA, inputB);
+main(inputs[0], inputs[1]);
 
 function main(str1: string, str2: string) {
   try {
